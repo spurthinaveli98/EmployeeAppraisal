@@ -8,7 +8,7 @@ public class ManagerRole extends JobRole {
         log.info("You will be soon Working as a Manager");
     }
     @Override
-    void work() {
+    public void work() {
        log.info("Your job is to assign work to employees");
     }
 }

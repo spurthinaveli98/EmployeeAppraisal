@@ -8,7 +8,7 @@ public class TesterRole extends JobRole {
         log.info("You will be soon Working as a Tester");
     }
     @Override
-    void work() {
+    public void work() {
         log.info("Your job is to test the working of the project.");
     }
 }

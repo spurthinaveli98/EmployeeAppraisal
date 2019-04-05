@@ -2,6 +2,9 @@ package appraisal;
 
 import appraisal.LevelEnum.Level;
 import appraisal.RoleEnum.Role;
+
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
@@ -10,22 +13,32 @@ public class EmployeeAppraisal {
     private static final Logger log = Logger.getLogger(EmployeeAppraisal.class.getName());
     private static Scanner sc = new Scanner(System.in);
     private static String qualityOfWork, quantityOfWork, technicalKnowledge, role;
-    private static int grades;
+    private static int testcase, grades;
+    static EnumMap<Role, Integer> map = new EnumMap(Role.class);
 
     public static void main(String[] args) {
-        log.info("Enter Employee quality of work, quantity of work, job knowledge and grades.");
-        try {
-            qualityOfWork = sc.next();
-            quantityOfWork = sc.next();
-            technicalKnowledge = sc.next();
-            grades = sc.nextInt();
-            if(grades >= 9) {
+        map.put(Role.Manager, 0);
+        map.put(Role.Developer, 0);
+        map.put(Role.Tester, 0);
+        log.info("Enter number of TestCases");
+        testcase = sc.nextInt();
+        while (testcase-- > 0) {
+
+            log.info("Enter Employee quality of work, quantity of work, job knowledge and grades.");
+            try {
+                qualityOfWork = sc.next();
+                quantityOfWork = sc.next();
+                technicalKnowledge = sc.next();
+                grades = sc.nextInt();
                 assignSuitableRole();
+                salaryIncrement();
+                countDifferentRoles();
+            } catch (Exception e) {
+                log. warning("Please ensure that the entered input is in correct format.");
             }
-            salaryIncrement();
         }
-            catch (Exception e) {
-            log.warning("Please ensure that the entered input is in correct format.");
+        for (Map.Entry m : map.entrySet()) {
+            log.info(m.getKey() + " " + m.getValue());
         }
     }
 
@@ -52,30 +65,54 @@ public class EmployeeAppraisal {
     }
 
     private static void assignSuitableRole() {
-        if (technicalKnowledge.equalsIgnoreCase(String.valueOf(Level.High))) {
-             role= String.valueOf(Role.Manager);
-            log.info("Role can be:"+role);
-             JobRole managerRole = new ManagerRole();
-             managerRole.jobRole();
-             managerRole.work();
-        }
-
-        else if(technicalKnowledge.equalsIgnoreCase(String.valueOf(Level.Medium))) {
+        WorkFactory workFactory = new WorkFactory();
+        if (technicalKnowledge.equalsIgnoreCase(String.valueOf(Level.High)) && grades >= 7) {
+            role = String.valueOf(Role.Manager);
+            log.info("Role can be:" + role);
+            JobRole jobRole = workFactory.getWork(role);
+            jobRole.welcome();
+            jobRole.work();
+        } else if (technicalKnowledge.equalsIgnoreCase(String.valueOf(Level.Medium)) && grades >= 7) {
             role = String.valueOf(Role.Developer);
-            log.info("Role can be:"+ role);
-            JobRole developerRole = new DeveloperRole();
-            developerRole.jobRole();
-            developerRole.work();
-        }
-
-        else {
+            log.info("Role can be:" + role);
+            JobRole jobRole = workFactory.getWork(role);
+            jobRole.welcome();
+            jobRole.work();
+        } else if (technicalKnowledge.equalsIgnoreCase(String.valueOf(Level.Low)) && grades >= 7) {
             role = String.valueOf(Role.Tester);
             log.info("Role can be:" + role);
-            TesterRole testerRole = new TesterRole();
-            testerRole.jobRole();
-            testerRole.work();
-        }
+            JobRole jobRole = workFactory.getWork(role);
+            jobRole.welcome();
+            jobRole.work();
+        } else
+            role = null;
 
     }
 
+    private static void countDifferentRoles() {
+
+        if (role.equals(String.valueOf(Role.Manager))) {
+            if (map.containsKey(Role.Manager)) {
+                Integer value = map.get(Role.Manager);
+                value++;
+                map.put(Role.Manager,value);
+            }
+        }
+        else if (role.equals(String.valueOf(Role.Developer))) {
+            if (map.containsKey(Role.Developer)) {
+                Integer value = map.get(Role.Developer);
+                value++;
+                map.put(Role.Developer,value);
+            }
+        }
+        else {
+            if (map.containsKey(Role.Tester)) {
+                Integer value = map.get(Role.Tester);
+                value++;
+                map.put(Role.Tester,value);
+            }
+        }
+
+
+    }
 }
